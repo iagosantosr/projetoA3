@@ -1,0 +1,32 @@
+#area-input{
+  height: 10vh; 
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+
+.btn-gerar{
+  color: white;
+  background-color: #1D6DF1;
+  border: none;
+  border-radius: 20px; 
+  padding: 10px; 
+  width: 300px;
+}
+
+#area-conjunto{
+  border: 1px solid black;
+  padding: 20px;
+}
+
+#number-formatter{
+  background-color: #ddd;
+  width: 30px;
+  color: black; 
+  padding: 10px;
+  border-radius: 50%;
+}
+
+#area-dicasenha{
+  margin-top: 10%;
+}

@@ -13,3 +13,11 @@
 body{
   background-color: #f9f9f9;
 }
+
+.btn-entrar{
+	background-color: #1D6DF1;
+	color: white;
+	border: none;
+	padding: 10px;
+	border-radius: 10px;
+}
