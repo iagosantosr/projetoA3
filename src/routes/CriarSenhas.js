@@ -1,7 +1,63 @@
-import React from "react";
+import React, { useState } from "react";
 import "../css/criaSenha.css";
+import OpenAI from "openai";
+import { useForm } from "react-hook-form";
 
 const CriarSenhas = () => {
+  const [checkboxes, setCheckboxes] = useState({
+    lowercase: false,
+    uppercase: false,
+    numbers: false,
+    symbols: false,
+  });
+
+  const handleCheckboxChange = (id) => {
+    setCheckboxes((prevCheckboxes) => ({
+      ...prevCheckboxes,
+      [id]: !prevCheckboxes[id],
+    }));
+  };
+
+  const { register, handleSubmit } = useForm();
+
+  const [messages, setMessages] = useState([
+    { role: "system", content: "Seja bem vindo ao SAFE GPT." },
+  ]);
+
+  const onSubmit = async (data) => {
+    // Configuração do OpenAI
+    const OPENAI_API_KEY =
+      "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";
+    const openai = new OpenAI({
+      apiKey: OPENAI_API_KEY,
+      dangerouslyAllowBrowser: true,
+    });
+
+    // Construa a string de entrada para o GPT com base nos checkboxes selecionados
+    const conjuntoCaracteres = Object.keys(checkboxes)
+      .filter((key) => checkboxes[key])
+      .map((key) => key.toLowerCase())
+      .join(",");
+
+    const inputString = `Gerar uma senha com os seguintes caracteres: ${conjuntoCaracteres}. Lembrete: ${data.lembrete}`;
+
+    // Faça a chamada à API do GPT
+    try {
+      console.log("Antes da chamada à API"); // console.log debug
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [...messages, { role: "user", content: inputString }],
+      });
+
+      const senhaGerada = response.data.choices[0].text.trim();
+      setMessages([...messages, { role: "assistant", content: senhaGerada }]);
+      console.log("Senha gerada:", senhaGerada);
+    } catch (error) {
+      console.error("Erro ao chamar a API do GPT:", error);
+    }
+  };
+
   return (
     <div fluid className="container p-3 my-5 mt-5 " id="area-generate">
       <div className="container mt-5" id="area-conjunto">
@@ -20,7 +76,8 @@ const CriarSenhas = () => {
                     className="form-checkbox"
                     type="checkbox"
                     name={item.id}
-                    defaultChecked={false}
+                    checked={checkboxes[item.id]}
+                    onChange={() => handleCheckboxChange(item.id)}
                   />
                   <span className="form-indicator"></span>
                   <span className="form-text">{item.label}</span>
@@ -34,10 +91,22 @@ const CriarSenhas = () => {
         <input
           type="text"
           required
-          class="form-control w-50" 
+          class="form-control w-50"
           placeholder="Digite o lembrete da senha"
+          {...register("lembrete")}
         />
-        <button class=" ms-5 btn-gerar">Gerar Senha</button>
+        <button
+          type="button"
+          className="ms-5 btn-gerar"
+          onClick={handleSubmit(onSubmit)}
+        >
+          Gerar Senha
+        </button>
+      </div>
+
+      <div> 
+        <p>Senha Gerada: </p>
+        
       </div>
 
       <div className="resources__section " id="area-dicasenha">
