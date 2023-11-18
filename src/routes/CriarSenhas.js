@@ -106,7 +106,7 @@ const CriarSenhas = () => {
 
       <div> 
         <p>Senha Gerada: </p>
-        
+        <p>.</p>
       </div>
 
       <div className="resources__section " id="area-dicasenha">

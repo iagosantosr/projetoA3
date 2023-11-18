@@ -3,8 +3,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Home, ListagemSenhas, CriarSenhas } from './routes';
 
-
-
+  
 const App = () => {
   return (
     <Router>
