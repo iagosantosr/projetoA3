@@ -4,19 +4,7 @@ import OpenAI from "openai";
 import { useForm } from "react-hook-form";
 
 const CriarSenhas = () => {
-  const [checkboxes, setCheckboxes] = useState({
-    lowercase: false,
-    uppercase: false,
-    numbers: false,
-    symbols: false,
-  });
-
-  const handleCheckboxChange = (id) => {
-    setCheckboxes((prevCheckboxes) => ({
-      ...prevCheckboxes,
-      [id]: !prevCheckboxes[id],
-    }));
-  };
+ 
 
   const { register, handleSubmit } = useForm();
 
@@ -27,7 +15,7 @@ const CriarSenhas = () => {
   const onSubmit = async (data) => {
     // Configuração do OpenAI
     const OPENAI_API_KEY =
-      "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";
+      "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";
     const openai = new OpenAI({
       apiKey: OPENAI_API_KEY,
       dangerouslyAllowBrowser: true,
@@ -58,9 +46,71 @@ const CriarSenhas = () => {
     }
   };
 
+  // funcao para gerar senha com base no checkbox em javascript
+
+  const [senhas, setSenhas] = useState([]);
+
+  const [checkboxes, setCheckboxes] = useState({
+    lowercase: false,
+    uppercase: false,
+    numbers: false,
+    symbols: false,
+  });
+
+  const handleCheckboxChange = (id) => {
+    setCheckboxes((prevCheckboxes) => ({
+      ...prevCheckboxes,
+      [id]: !prevCheckboxes[id],
+    }));
+  };
+
+  const [senhaGerada, setSenhaGerada] = useState(''); 
+  
+  const gerarSenha = () => {
+    const caracteres = {
+      lowercase: "abcdefghijklmnopqrstuvwxyz",
+      uppercase: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      numbers: "0123456789",
+      symbols: "!@#$%&*()_+",
+    };
+  
+    let caracteresSelecionados = "";
+  
+    Object.keys(checkboxes).forEach((key) => {
+      if (checkboxes[key]) {
+        caracteresSelecionados += caracteres[key];
+      }
+    });
+  
+    if (caracteresSelecionados.length === 0) {
+      alert("Selecione pelo menos uma opção para gerar a senha.");
+      return;
+    }
+  
+    const senha = [];
+    const caracteresLength = caracteresSelecionados.length;
+    for (let i = 0; i < 16; i++) {
+      senha.push(caracteresSelecionados.charAt(Math.floor(Math.random() * caracteresLength)));
+    }
+  
+    const senhaGerada = senha.join('');
+ 
+  setSenhas((prevSenhas) => [
+    ...prevSenhas,
+    { _id: prevSenhas.length + 1, data: 'Temporária', lembrete: senhaGerada },
+  ]);
+
+    setSenhaGerada(senhaGerada);
+  }
+   
+
+  
+ 
   return (
-    <div fluid className="container p-3 my-5 mt-5 " id="area-generate">
+    <div fluid className="container p-3 my-5 mt-5 " id="area-generate"> 
       <div className="container mt-5" id="area-conjunto">
+
+       
         <h6>Conjunto de Caracteres</h6>
         <div className="row">
           {[
@@ -96,9 +146,9 @@ const CriarSenhas = () => {
           {...register("lembrete")}
         />
         <button
-          type="button"
+          type="submit"
           className="ms-5 btn-gerar"
-          onClick={handleSubmit(onSubmit)}
+          onClick={gerarSenha}
         >
           Gerar Senha
         </button>
@@ -106,7 +156,7 @@ const CriarSenhas = () => {
 
       <div> 
         <p>Senha Gerada: </p>
-        <p>.</p>
+        <p>{senhaGerada}</p> 
       </div>
 
       <div className="resources__section " id="area-dicasenha">
@@ -157,7 +207,7 @@ const CriarSenhas = () => {
             </div>
           ))}
         </div>
-      </div>
+      </div> 
     </div>
   );
 };
