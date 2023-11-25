@@ -34,7 +34,7 @@ const Home = () => {
             <MDBInput wrapperClass='mb-4' placeholder='Insira sua Senha' id='formControlLg' type='password' size='lg'/>
 
             <div class='d-flex justify-content-center'>
-              <a href="/listaSenha"> 
+              <a href="/criaSenha"> 
               <button className='mb-4 btn-entrar'>Entrar</button> 
               </a>
             </div>

@@ -5,6 +5,16 @@ import { useForm } from "react-hook-form";
 
 const CriarSenhas = () => {
  
+  const saveSenha = (senha) => {
+    const senhaList = JSON.parse(localStorage.getItem('senhas')) || [];
+    const novoId = senhaList.length + 1;
+    senha._id = novoId;
+    senha.lembrete = 'teste' + novoId;
+    const updatedSenhas = [...senhaList, senha];
+    localStorage.setItem('senhas', JSON.stringify(updatedSenhas));
+  };
+
+  const [senhaList, setSenhaList] = useState([]); // Renomeie para evitar conflito
 
   const { register, handleSubmit } = useForm();
 
@@ -41,6 +51,17 @@ const CriarSenhas = () => {
       const senhaGerada = response.data.choices[0].text.trim();
       setMessages([...messages, { role: "assistant", content: senhaGerada }]);
       console.log("Senha gerada:", senhaGerada);
+
+          // Obter a data atual
+          const dataAtual = new Date();
+          const dia = String(dataAtual.getDate()).padStart(2, '0');
+          const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
+          const ano = dataAtual.getFullYear();
+          const dataFormatada = `${dia}/${mes}/${ano}`;
+
+      // Salvar a senha gerada
+      saveSenha({ _id: senhaList.length + 1, data: dataFormatada, lembrete: 'teste'+senhaList.length + 1, senha: senhaGerada  });
+
     } catch (error) {
       console.error("Erro ao chamar a API do GPT:", error);
     }
@@ -87,18 +108,44 @@ const CriarSenhas = () => {
       return;
     }
   
+              // Obter a data atual
+              const dataAtual = new Date();
+              const dia = String(dataAtual.getDate()).padStart(2, '0');
+              const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
+              const ano = dataAtual.getFullYear();
+              const dataFormatada = `${dia}/${mes}/${ano}`;
+
+  // Defina o comprimento mínimo e máximo da senha
+  const comprimentoMinimo = 8;
+  const comprimentoMaximo = 16;
+
+  // Gere um comprimento aleatório dentro do intervalo definido
+  const comprimentoSenha = Math.floor(
+    Math.random() * (comprimentoMaximo - comprimentoMinimo + 1) + comprimentoMinimo
+  );
+
     const senha = [];
-    const caracteresLength = caracteresSelecionados.length;
-    for (let i = 0; i < 16; i++) {
-      senha.push(caracteresSelecionados.charAt(Math.floor(Math.random() * caracteresLength)));
+    
+    for (let i = 0; i < comprimentoSenha; i++) {
+      senha.push(caracteresSelecionados.charAt(Math.floor(Math.random() * caracteresSelecionados.length)));
     }
-  
+
     const senhaGerada = senha.join('');
  
   setSenhas((prevSenhas) => [
     ...prevSenhas,
-    { _id: prevSenhas.length + 1, data: 'Temporária', lembrete: senhaGerada },
+    { _id: senhaList.length + 1, data: dataFormatada, lembrete: 'teste'+senhaList.length + 1, senha: senhaGerada },
   ]);
+
+  setSenhas((prevSenhas) => [
+    ...prevSenhas,
+    { _id: senhaList.length + 1, data: dataFormatada, lembrete: 'teste'+senhaList.length + 1, senha: senha },
+  ]);
+
+  setSenhaGerada(senha);
+
+  // Salvar a senha gerada
+  saveSenha({ _id: senhaList.length + 1, data: dataFormatada, lembrete: 'teste'+senhaList.length + 1, senha: senha });
 
     setSenhaGerada(senhaGerada);
   }
@@ -138,13 +185,6 @@ const CriarSenhas = () => {
         </div>
       </div>
       <div id="area-input" class="d-flex justify-content-center mt-5">
-        <input
-          type="text"
-          required
-          class="form-control w-50"
-          placeholder="Digite o lembrete da senha"
-          {...register("lembrete")}
-        />
         <button
           type="submit"
           className="ms-5 btn-gerar"
