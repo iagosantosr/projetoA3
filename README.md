@@ -1,3 +1,6 @@
+Repositorio destinado ao projeto da A3 do ultimo semestre do curso de Sistemas da Informação Universidade São Judas Tadeu - Butantã
+
+
 |NOMES 														|RA
 |---------------------------------|---------|
 |Allan von dentz de souza sá      |820139318|
